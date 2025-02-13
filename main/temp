@@ -1,0 +1,99 @@
+
+    //测试读取数据
+    Active_burst();
+    write_register(0x5B,0x00);
+    // 读取ID寄存器（0x5B）
+    uint8_t TestRegisters = read_register(0x5B);
+    
+    // 打印结果
+    ESP_LOGW(TAG, "First: 0x%02X", TestRegisters);
+
+    write_register(0x5B,0xE0);
+
+        // 读取ID寄存器（0x5B）
+    TestRegisters = read_register(0x5B);
+    
+    // 打印结果
+    ESP_LOGW(TAG, "Second: 0x%02X", TestRegisters);
+
+    /************* TinyUSB 描述符 ****************/
+/********* 应用程序 ***************/
+
+/**
+ * @brief 定义鼠标移动方向枚举
+ */
+typedef enum {
+    MOUSE_DIR_RIGHT,
+    MOUSE_DIR_DOWN,
+    MOUSE_DIR_LEFT,
+    MOUSE_DIR_UP,
+    MOUSE_DIR_MAX,
+} mouse_dir_t;
+
+
+static bool spi_write(const uint8_t *buffer, size_t len,
+                               const uint8_t *prefix_buffer,
+                               size_t prefix_len) {
+
+	_spiPort->beginTransaction(SPISettings(_spiPortSpeed, MSBFIRST, SPI_MODE3));
+	digitalWrite(_cs, LOW);
+
+  // do the writing
+#if defined(ARDUINO_ARCH_ESP32)
+  if (_spiPort) {
+    // if (prefix_len > 0) {
+    //   _spiPort->transferBytes(prefix_buffer, nullptr, prefix_len);
+    // }
+    if (len > 0) {
+      _spiPort->transferBytes(buffer, nullptr, len);
+    }
+  } else
+#endif
+  {
+    // for (size_t i = 0; i < prefix_len; i++) {
+    //   _spiPort->transfer(prefix_buffer[i]);
+    // }
+    for (size_t i = 0; i < len; i++) {
+      _spiPort->transfer(buffer[i]);
+    }
+  }
+
+  digitalWrite(_cs, HIGH);
+  _spiPort->endTransaction();
+
+  return true;
+}
+
+
+// 读取SHTP数据包
+void BNO080_Verify(void) {
+    uint8_t tx_data[2] = {SENSORHUB_PROD_ID_REQ, 0x00};
+    uint8_t rx_data[16] = {0};
+
+    spi_transaction_t t = {
+        .length = 18 * 8,  // 发送和接收共18字节
+        .tx_buffer = tx_data,
+        .rx_buffer = rx_data,
+    };
+    ESP_LOGI("BNO080通讯验证", "已进行ProductID通讯");
+    esp_err_t ret = spi_device_transmit(bno080, &t);
+    if (ret == ESP_OK) {
+        ESP_LOGI("BNO080通讯验证", "验证成功，报告ID为0x%X",rx_data[0]);
+        if (rx_data[0] == SENSORHUB_PROD_ID_RESP) {
+            uint8_t resetCause = rx_data[1];
+            uint8_t swVerMajor = rx_data[2];
+            uint8_t swVerMinor = rx_data[3];
+            uint32_t swPartNumber = (rx_data[4] | (rx_data[5] << 8) | (rx_data[6] << 16) | (rx_data[7] << 24));
+            uint32_t swBuildNumber = (rx_data[8] | (rx_data[9] << 8) | (rx_data[10] << 16) | (rx_data[11] << 24));
+            uint16_t swVerPatch = (rx_data[12] | (rx_data[13] << 8));
+            ESP_LOGI("BNO080通讯验证", "最近一次复位的原因: %d", resetCause);
+            ESP_LOGI("BNO080通讯验证", "固件主版本号|固件次版本号|固件补丁版本号: %d|%d|%d", swVerMajor, swVerMinor, swVerPatch);
+            ESP_LOGI("BNO080通讯验证", "软件部件号: %"PRIu32, swPartNumber);
+            ESP_LOGI("BNO080通讯验证", "软件构建号: %"PRIu32, swBuildNumber);
+        } else {
+            ESP_LOGE("BNO080通讯验证", "未知报告ID: 0x%X", rx_data[0]);
+        }
+    } else {
+        ESP_LOGE("BNO080通讯验证", "通讯验证错误");
+    }
+}
