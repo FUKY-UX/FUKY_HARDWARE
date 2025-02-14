@@ -8,6 +8,8 @@
 #include <string.h>
 #include "esp_log.h"
 
+
+
 /// characteristic presentation information
 struct prf_char_pres_fmt
 {
@@ -25,6 +27,7 @@ struct prf_char_pres_fmt
 
 // HID report mapping table
 static hid_report_map_t hid_rpt_map[HID_NUM_REPORTS];
+
 
 // HID Report Map characteristic value
 // Keyboard report descriptor (using format for Boot interface descriptor)
@@ -279,6 +282,24 @@ enum
     BAS_IDX_NB,
 };
 
+/// Device Information Service
+
+enum {
+    DIS_IDX_SVC,                // Service Declaration
+    DIS_IDX_MANU_NAME_CHAR,     // Manufacturer Name String: Characteristic Declaration
+    DIS_IDX_MANU_NAME_VAL,      // Manufacturer Name String: Characteristic Value
+    DIS_IDX_MODEL_NUM_CHAR,     // Model Number String: Characteristic Declaration
+    DIS_IDX_MODEL_NUM_VAL,      // Model Number String: Characteristic Value
+    DIS_IDX_SERIAL_NUM_CHAR,    // Serial Number String: Characteristic Declaration
+    DIS_IDX_SERIAL_NUM_VAL,     // Serial Number String: Characteristic Value
+
+    DIS_IDX_NB                  // 总数
+};
+
+// DIS table
+static uint16_t dis_handle_table[DIS_IDX_NB];
+
+
 #define HI_UINT16(a) (((a) >> 8) & 0xFF)
 #define LO_UINT16(a) ((a) & 0xFF)
 #define PROFILE_NUM            1
@@ -348,6 +369,7 @@ static uint8_t hidReportRefCCIn[HID_REPORT_REF_LEN] =
 static uint16_t hid_le_svc = ATT_SVC_HID;
 uint16_t            hid_count = 0;
 esp_gatts_incl_svc_desc_t incl_svc = {0};
+esp_gatts_incl_svc_desc_t incl_dis_svc = {0};
 
 #define CHAR_DECLARATION_SIZE   (sizeof(uint8_t))
 ///the uuid definition
@@ -365,6 +387,7 @@ static const uint16_t hid_kb_output_uuid = ESP_GATT_UUID_HID_BT_KB_OUTPUT;
 static const uint16_t hid_mouse_input_uuid = ESP_GATT_UUID_HID_BT_MOUSE_INPUT;
 static const uint16_t hid_repot_map_ext_desc_uuid = ESP_GATT_UUID_EXT_RPT_REF_DESCR;
 static const uint16_t hid_report_ref_descr_uuid = ESP_GATT_UUID_RPT_REF_DESCR;
+
 ///the propoty definition
 //static const uint8_t char_prop_notify = ESP_GATT_CHAR_PROP_BIT_NOTIFY;
 static const uint8_t char_prop_read = ESP_GATT_CHAR_PROP_BIT_READ;
@@ -382,6 +405,22 @@ static const uint8_t   bat_lev_ccc[2] ={ 0x00, 0x00};
 static const uint16_t char_format_uuid = ESP_GATT_UUID_CHAR_PRESENT_FORMAT;
 
 static uint8_t battary_lev = 50;
+
+/// DIS Service
+esp_gatt_if_t  DIS_gatt_if;
+
+static const uint16_t dis_service_uuid = ESP_GATT_UUID_DEVICE_INFO_SVC;       // DIS UUID
+
+static const uint16_t manu_name_uuid   = ESP_GATT_UUID_MANU_NAME; // Manufacturer Name
+static const uint16_t model_num_uuid   = ESP_GATT_UUID_MODEL_NUMBER_STR; // Model Number
+static const uint16_t serial_num_uuid  = ESP_GATT_UUID_SERIAL_NUMBER_STR; // Serial Number
+
+
+// 显式指定长度（移除\0）
+static const uint8_t manufacturer_name[] = {'F','U','K','Y','_','S','t','u','d','i','o'}; // 11字节
+static const uint8_t model_number[] = {'F','U','K','Y','_','M','O','U','S','E'};         // 10字节
+static const uint8_t serial_number[] = {'S','N','_','0','1'}; 
+
 /// Full HRS Database Description - Used to add attributes into the database
 static const esp_gatts_attr_db_t bas_att_db[BAS_IDX_NB] =
 {
@@ -405,7 +444,100 @@ static const esp_gatts_attr_db_t bas_att_db[BAS_IDX_NB] =
     [BAS_IDX_BATT_LVL_PRES_FMT]  = {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&char_format_uuid, ESP_GATT_PERM_READ,
                                                         sizeof(struct prf_char_pres_fmt), 0, NULL}},
 };
+// GATT 属性表
+static const esp_gatts_attr_db_t dis_att_db[DIS_IDX_NB] =
+{
+    // 1Service Declaration (UUID=0x2800), value=0x180A (DIS)
+    [DIS_IDX_SVC]               =  {
+        {ESP_GATT_AUTO_RSP}, 
+        {
+            ESP_UUID_LEN_16, 
+            (uint8_t *)&primary_service_uuid, 
+            ESP_GATT_PERM_READ,
+            sizeof(uint16_t), 
+            sizeof(dis_service_uuid), 
+            (uint8_t *)&dis_service_uuid
+        }
+    },
 
+    // 2Manufacturer Name Characteristic Declaration (UUID=0x2803)
+    [DIS_IDX_MANU_NAME_CHAR]    = {
+        {ESP_GATT_AUTO_RSP}, 
+        {
+            ESP_UUID_LEN_16, 
+            (uint8_t *)&character_declaration_uuid, 
+            ESP_GATT_PERM_READ,
+            CHAR_DECLARATION_SIZE,
+            CHAR_DECLARATION_SIZE, 
+            (uint8_t *)&char_prop_read_notify
+        }
+    },
+
+    // 3Manufacturer Name Characteristic Value (UUID=0x2A29)
+    [DIS_IDX_MANU_NAME_VAL]     = {
+        {ESP_GATT_AUTO_RSP}, 
+        {
+            ESP_UUID_LEN_16, 
+            (uint8_t *)&manu_name_uuid, 
+            ESP_GATT_PERM_READ,
+            sizeof(manufacturer_name),
+            sizeof(manufacturer_name), 
+            &manufacturer_name
+        }
+    },
+
+    // 4Model Number Characteristic Declaration
+    [DIS_IDX_MODEL_NUM_CHAR]    = {
+        {ESP_GATT_AUTO_RSP}, 
+        {
+            ESP_UUID_LEN_16, 
+            (uint8_t *)&character_declaration_uuid, 
+            ESP_GATT_PERM_READ,
+            CHAR_DECLARATION_SIZE,
+            CHAR_DECLARATION_SIZE, 
+            (uint8_t *)&char_prop_read_notify
+        }
+    },
+
+    // 5Model Number Characteristic Value (UUID=0x2A24)
+    [DIS_IDX_MODEL_NUM_VAL]  = {
+        {ESP_GATT_AUTO_RSP}, 
+        {
+            ESP_UUID_LEN_16, 
+            (uint8_t *)&model_num_uuid, 
+            ESP_GATT_PERM_READ,
+            sizeof(model_number), 
+            sizeof(model_number), 
+            (uint8_t *)model_number
+        }
+    },
+
+    // 6Serial Number Characteristic Declaration
+    [DIS_IDX_SERIAL_NUM_CHAR]     	=  {
+        {ESP_GATT_AUTO_RSP}, 
+        {
+            ESP_UUID_LEN_16, 
+            (uint8_t *)&character_declaration_uuid, 
+            ESP_GATT_PERM_READ,
+            CHAR_DECLARATION_SIZE,
+            CHAR_DECLARATION_SIZE, 
+            (uint8_t *)&char_prop_read_notify
+        }
+    },
+
+    // 7Serial Number Characteristic Value (UUID=0x2A25)
+    [DIS_IDX_SERIAL_NUM_VAL]  = {
+        {ESP_GATT_AUTO_RSP}, 
+        {
+            ESP_UUID_LEN_16, 
+            (uint8_t *)&serial_num_uuid,
+            ESP_GATT_PERM_READ,
+             sizeof(serial_number), 
+             sizeof(serial_number), 
+             (uint8_t *)serial_number
+        }
+    },
+};
 
 /// Full Hid device Database Description - Used to add attributes into the database
 static esp_gatts_attr_db_t hidd_le_gatt_db[HIDD_LE_IDX_NB] =
@@ -419,8 +551,8 @@ static esp_gatts_attr_db_t hidd_le_gatt_db[HIDD_LE_IDX_NB] =
     [HIDD_LE_IDX_INCL_SVC]               = {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&include_service_uuid,
                                                             ESP_GATT_PERM_READ,
                                                             sizeof(esp_gatts_incl_svc_desc_t), sizeof(esp_gatts_incl_svc_desc_t),
-                                                            (uint8_t *)&incl_svc}},
-
+                                                            (uint8_t *)&incl_svc}},      
+                                                            
     // HID Information Characteristic Declaration
     [HIDD_LE_IDX_HID_INFO_CHAR]     = {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&character_declaration_uuid,
                                                             ESP_GATT_PERM_READ,
@@ -638,14 +770,26 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
                     hidd_le_create_service(hidd_le_env.gatt_if);
                 }
             }
-            if(param->reg.app_id == BATTRAY_APP_ID) {
+            if(param->reg.app_id == HID_BAS_APP_ID) {
                 hidd_param.init_finish.gatts_if = gatts_if;
                  if(hidd_le_env.hidd_cb != NULL) {
                     (hidd_le_env.hidd_cb)(ESP_BAT_EVENT_REG, &hidd_param);
                 }
 
             }
+            if(param->reg.app_id == DIS_APP_ID) {
+                if(param->reg.status == ESP_GATT_OK)
+                {
+                    DIS_gatt_if = gatts_if;//保存下注册的服务句柄
+                    esp_ble_gatts_create_attr_tab(dis_att_db, gatts_if, DIS_IDX_NB, 1);//然后创建个表
+                }
+                else
+                {
+                    ESP_LOGI("DIS服务", "注册失败");
+                }
 
+            }
+            
             break;
         }
         case ESP_GATTS_CONF_EVT: {
@@ -659,7 +803,7 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
 			memcpy(cb_param.connect.remote_bda, param->connect.remote_bda, sizeof(esp_bd_addr_t));
             cb_param.connect.conn_id = param->connect.conn_id;
             hidd_clcb_alloc(param->connect.conn_id, param->connect.remote_bda);
-            esp_ble_set_encryption(param->connect.remote_bda, ESP_BLE_SEC_ENCRYPT_NO_MITM);
+            //esp_ble_set_encryption(param->connect.remote_bda, ESP_BLE_SEC_ENCRYPT_NO_MITM);
             if(hidd_le_env.hidd_cb != NULL) {
                 (hidd_le_env.hidd_cb)(ESP_HIDD_EVENT_BLE_CONNECT, &cb_param);
             }
@@ -696,27 +840,48 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
             break;
         }
         case ESP_GATTS_CREAT_ATTR_TAB_EVT: {
-            if (param->add_attr_tab.num_handle == BAS_IDX_NB &&
-                param->add_attr_tab.svc_uuid.uuid.uuid16 == ESP_GATT_UUID_BATTERY_SERVICE_SVC &&
-                param->add_attr_tab.status == ESP_GATT_OK) {
-                incl_svc.start_hdl = param->add_attr_tab.handles[BAS_IDX_SVC];
-                incl_svc.end_hdl = incl_svc.start_hdl + BAS_IDX_NB -1;
-                ESP_LOGI(HID_LE_PRF_TAG, "%s(), start added the hid service to the stack database. incl_handle = %d",
-                           __func__, incl_svc.start_hdl);
-                esp_ble_gatts_create_attr_tab(hidd_le_gatt_db, gatts_if, HIDD_LE_IDX_NB, 0);
+            if(param->add_attr_tab.status != ESP_GATT_OK)
+            {
+                ESP_LOGE("报错", "表没有创建,服务号为%d",param->add_attr_tab.svc_inst_id);
+
             }
-            if (param->add_attr_tab.num_handle == HIDD_LE_IDX_NB &&
-                param->add_attr_tab.status == ESP_GATT_OK) {
-                memcpy(hidd_le_env.hidd_inst.att_tbl, param->add_attr_tab.handles,
-                            HIDD_LE_IDX_NB*sizeof(uint16_t));
-                ESP_LOGI(HID_LE_PRF_TAG, "hid svc handle = %x",hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_SVC]);
-                hid_add_id_tbl();
-		        esp_ble_gatts_start_service(hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_SVC]);
-            } else {
-                esp_ble_gatts_start_service(param->add_attr_tab.handles[0]);
+            else if(param->add_attr_tab.svc_inst_id == 0)
+            {
+                if (param->add_attr_tab.num_handle == BAS_IDX_NB &&param->add_attr_tab.svc_uuid.uuid.uuid16 == ESP_GATT_UUID_BATTERY_SERVICE_SVC) 
+                {
+                    incl_svc.start_hdl = param->add_attr_tab.handles[BAS_IDX_SVC];
+                    incl_svc.end_hdl = incl_svc.start_hdl + BAS_IDX_NB -1;
+                    ESP_LOGI(HID_LE_PRF_TAG, "%s(), start added the hid service to the stack database. incl_handle = %d",__func__, incl_svc.start_hdl);
+                    esp_ble_gatts_create_attr_tab(hidd_le_gatt_db, gatts_if, HIDD_LE_IDX_NB, 0);
+                }
+                if (param->add_attr_tab.num_handle == HIDD_LE_IDX_NB) 
+                {
+                    memcpy(hidd_le_env.hidd_inst.att_tbl, param->add_attr_tab.handles,HIDD_LE_IDX_NB*sizeof(uint16_t));
+                    ESP_LOGI(HID_LE_PRF_TAG, "hid svc handle = %x",hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_SVC]);
+                    hid_add_id_tbl();
+                    esp_ble_gatts_start_service(hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_SVC]);
+                }
+
             }
+            else if(param->add_attr_tab.svc_inst_id == 1)
+            {
+                ESP_LOGI("蓝牙DIS服务", "开始服务");
+                if(param->add_attr_tab.num_handle == DIS_IDX_NB)
+                {
+                    memcpy(dis_handle_table, param->add_attr_tab.handles,sizeof(dis_handle_table));
+                    esp_err_t ret = esp_ble_gatts_start_service(dis_handle_table[DIS_IDX_SVC]);
+                    if(ret != ESP_OK)
+                    {
+                        ESP_LOGI("蓝牙DIS服务", "启动失败");
+                    }
+
+                }
+            }
+            
+
+
             break;
-         }
+        }
 
         default:
             break;
@@ -725,15 +890,13 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
 
 void hidd_le_create_service(esp_gatt_if_t gatts_if)
 {
-    /* Here should added the battery service first, because the hid service should include the battery service.
-       After finish to added the battery service then can added the hid service. */
+    /* 先添加HID服务的包含服务，电池*/
     esp_ble_gatts_create_attr_tab(bas_att_db, gatts_if, BAS_IDX_NB, 0);
-
 }
+
 
 void hidd_le_init(void)
 {
-
     // Reset the hid device target environment
     memset(&hidd_le_env, 0, sizeof(hidd_le_env_t));
 }
@@ -804,7 +967,6 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
     } while (0);
 }
 
-
 esp_err_t hidd_register_cb(void)
 {
 	esp_err_t status;
@@ -843,7 +1005,7 @@ static void hid_add_id_tbl(void)
       hid_rpt_map[0].id = hidReportRefMouseIn[0];
       hid_rpt_map[0].type = hidReportRefMouseIn[1];
       hid_rpt_map[0].handle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_REPORT_MOUSE_IN_VAL];
-      hid_rpt_map[0].cccdHandle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_REPORT_MOUSE_IN_VAL];
+      hid_rpt_map[0].cccdHandle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_REPORT_MOUSE_IN_CCC];
       hid_rpt_map[0].mode = HID_PROTOCOL_MODE_REPORT;
 
       // Key input report

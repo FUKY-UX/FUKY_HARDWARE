@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/DELL/Desktop/ESP32_TRY/hd_eeprom/hd_eeprom/managed_components/espressif__esp_tinyusb
+# Install script for directory: C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/managed_components/espressif__esp_tinyusb
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

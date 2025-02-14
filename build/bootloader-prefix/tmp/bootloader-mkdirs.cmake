@@ -5,18 +5,18 @@ cmake_minimum_required(VERSION 3.5)
 
 file(MAKE_DIRECTORY
   "D:/VSCodeHardWare/Espressif/frameworks/esp-idf-v5.2.3/components/bootloader/subproject"
-  "C:/Users/DELL/Desktop/ESP32_TRY/hd_eeprom/hd_eeprom/build/bootloader"
-  "C:/Users/DELL/Desktop/ESP32_TRY/hd_eeprom/hd_eeprom/build/bootloader-prefix"
-  "C:/Users/DELL/Desktop/ESP32_TRY/hd_eeprom/hd_eeprom/build/bootloader-prefix/tmp"
-  "C:/Users/DELL/Desktop/ESP32_TRY/hd_eeprom/hd_eeprom/build/bootloader-prefix/src/bootloader-stamp"
-  "C:/Users/DELL/Desktop/ESP32_TRY/hd_eeprom/hd_eeprom/build/bootloader-prefix/src"
-  "C:/Users/DELL/Desktop/ESP32_TRY/hd_eeprom/hd_eeprom/build/bootloader-prefix/src/bootloader-stamp"
+  "C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/build/bootloader"
+  "C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/build/bootloader-prefix"
+  "C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/build/bootloader-prefix/tmp"
+  "C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/build/bootloader-prefix/src/bootloader-stamp"
+  "C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/build/bootloader-prefix/src"
+  "C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/build/bootloader-prefix/src/bootloader-stamp"
 )
 
 set(configSubDirs )
 foreach(subDir IN LISTS configSubDirs)
-    file(MAKE_DIRECTORY "C:/Users/DELL/Desktop/ESP32_TRY/hd_eeprom/hd_eeprom/build/bootloader-prefix/src/bootloader-stamp/${subDir}")
+    file(MAKE_DIRECTORY "C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/build/bootloader-prefix/src/bootloader-stamp/${subDir}")
 endforeach()
 if(cfgdir)
-  file(MAKE_DIRECTORY "C:/Users/DELL/Desktop/ESP32_TRY/hd_eeprom/hd_eeprom/build/bootloader-prefix/src/bootloader-stamp${cfgdir}") # cfgdir has leading slash
+  file(MAKE_DIRECTORY "C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/build/bootloader-prefix/src/bootloader-stamp${cfgdir}") # cfgdir has leading slash
 endif()

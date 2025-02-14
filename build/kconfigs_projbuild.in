@@ -3,4 +3,4 @@ source "D:/VSCodeHardWare/Espressif/frameworks/esp-idf-v5.2.3/components/esp_app
 source "D:/VSCodeHardWare/Espressif/frameworks/esp-idf-v5.2.3/components/esp_rom/Kconfig.projbuild"
 source "D:/VSCodeHardWare/Espressif/frameworks/esp-idf-v5.2.3/components/esptool_py/Kconfig.projbuild"
 source "D:/VSCodeHardWare/Espressif/frameworks/esp-idf-v5.2.3/components/partition_table/Kconfig.projbuild"
-source "C:/Users/DELL/Desktop/ESP32_TRY/hd_eeprom/hd_eeprom/main/Kconfig.projbuild"
+source "C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/main/Kconfig.projbuild"

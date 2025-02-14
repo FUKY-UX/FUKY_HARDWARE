@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/DELL/Desktop/ESP32_TRY/hd_eeprom/hd_eeprom/components/PAW3395
+# Install script for directory: C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/components/PAW3395
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

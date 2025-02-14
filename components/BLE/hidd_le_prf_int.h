@@ -43,10 +43,10 @@
 #define HID_RPT_ID_LED_OUT       2  // LED output report ID
 #define HID_RPT_ID_FEATURE       0  // Feature report ID
 
-#define HIDD_APP_ID			0x1812//ATT_SVC_HID
+#define HIDD_APP_ID			    0x1812//ATT_SVC_HID
 
-#define BATTRAY_APP_ID       0x180f
-
+#define HID_BAS_APP_ID      0x180f
+#define DIS_APP_ID              0x180A
 
 #define ATT_SVC_HID          0x1812
 
@@ -324,6 +324,8 @@ void hidd_clcb_alloc (uint16_t conn_id, esp_bd_addr_t bda);
 bool hidd_clcb_dealloc (uint16_t conn_id);
 
 void hidd_le_create_service(esp_gatt_if_t gatts_if);
+
+void DIS_create_service(esp_gatt_if_t gatts_if);
 
 void hidd_set_attr_value(uint16_t handle, uint16_t val_len, const uint8_t *value);
 

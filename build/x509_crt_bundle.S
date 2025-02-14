@@ -1,4 +1,4 @@
-/* * Data converted from C:/Users/DELL/Desktop/ESP32_TRY/hd_eeprom/hd_eeprom/build/esp-idf/mbedtls/x509_crt_bundle
+/* * Data converted from C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/build/esp-idf/mbedtls/x509_crt_bundle
  */
 .data
 .section .rodata.embedded

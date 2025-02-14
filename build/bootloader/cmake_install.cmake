@@ -39,7 +39,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/DELL/Desktop/ESP32_TRY/hd_eeprom/hd_eeprom/build/bootloader/esp-idf/cmake_install.cmake")
+  include("C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/build/bootloader/esp-idf/cmake_install.cmake")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/DELL/Desktop/ESP32_TRY/hd_eeprom/hd_eeprom/build/bootloader/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/build/bootloader/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

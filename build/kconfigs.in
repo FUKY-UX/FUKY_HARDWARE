@@ -50,4 +50,4 @@ source "D:/VSCodeHardWare/Espressif/frameworks/esp-idf-v5.2.3/components/usb/Kco
 source "D:/VSCodeHardWare/Espressif/frameworks/esp-idf-v5.2.3/components/vfs/Kconfig"
 source "D:/VSCodeHardWare/Espressif/frameworks/esp-idf-v5.2.3/components/wear_levelling/Kconfig"
 source "D:/VSCodeHardWare/Espressif/frameworks/esp-idf-v5.2.3/components/wifi_provisioning/Kconfig"
-source "C:/Users/DELL/Desktop/ESP32_TRY/hd_eeprom/hd_eeprom/managed_components/espressif__esp_tinyusb/Kconfig"
+source "C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/managed_components/espressif__esp_tinyusb/Kconfig"

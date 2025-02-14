@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/DELL/Desktop/ESP32_TRY/hd_eeprom/hd_eeprom/components/BNO080
+# Install script for directory: C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/components/BNO080
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
