@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "FUKY_MOUSE",
-    "project_version":    "561d3fd-dirty",
+    "project_version":    "aba028d-dirty",
     "project_path":       "C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare",
     "idf_path":           "D:/VSCodeHardWare/Espressif/frameworks/esp-idf-v5.2.3",
     "build_dir":          "C:/Users/DELL/Desktop/ESP32_TRY/FUKY_HardWare/build",

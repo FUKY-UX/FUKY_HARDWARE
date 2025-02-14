@@ -102,6 +102,7 @@ enum {
 
     // Included Service
     HIDD_LE_IDX_INCL_SVC,
+    HIDD_LE_IDX_INCL_DIS_SVC,
 
     // HID Information
     HIDD_LE_IDX_HID_INFO_CHAR,
@@ -324,8 +325,6 @@ void hidd_clcb_alloc (uint16_t conn_id, esp_bd_addr_t bda);
 bool hidd_clcb_dealloc (uint16_t conn_id);
 
 void hidd_le_create_service(esp_gatt_if_t gatts_if);
-
-void DIS_create_service(esp_gatt_if_t gatts_if);
 
 void hidd_set_attr_value(uint16_t handle, uint16_t val_len, const uint8_t *value);
 

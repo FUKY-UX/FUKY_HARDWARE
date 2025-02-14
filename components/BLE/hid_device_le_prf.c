@@ -297,7 +297,7 @@ enum {
 };
 
 // DIS table
-static uint16_t dis_handle_table[DIS_IDX_NB];
+//static uint16_t dis_handle_table[DIS_IDX_NB];
 
 
 #define HI_UINT16(a) (((a) >> 8) & 0xFF)
@@ -548,11 +548,17 @@ static esp_gatts_attr_db_t hidd_le_gatt_db[HIDD_LE_IDX_NB] =
                                                             (uint8_t *)&hid_le_svc}},
 
     // HID Service Declaration
-    [HIDD_LE_IDX_INCL_SVC]               = {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&include_service_uuid,
+    [HIDD_LE_IDX_INCL_SVC]                  = {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&include_service_uuid,
                                                             ESP_GATT_PERM_READ,
                                                             sizeof(esp_gatts_incl_svc_desc_t), sizeof(esp_gatts_incl_svc_desc_t),
                                                             (uint8_t *)&incl_svc}},      
                                                             
+    // DIS Service Declaration
+    [HIDD_LE_IDX_INCL_DIS_SVC]               = {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&include_service_uuid,
+                                                            ESP_GATT_PERM_READ,
+                                                            sizeof(esp_gatts_incl_svc_desc_t), sizeof(esp_gatts_incl_svc_desc_t),
+                                                            (uint8_t *)&incl_dis_svc}},
+
     // HID Information Characteristic Declaration
     [HIDD_LE_IDX_HID_INFO_CHAR]     = {{ESP_GATT_AUTO_RSP}, {ESP_UUID_LEN_16, (uint8_t *)&character_declaration_uuid,
                                                             ESP_GATT_PERM_READ,
@@ -767,28 +773,34 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
                 hidd_le_env.gatt_if = gatts_if;
                 if(hidd_le_env.hidd_cb != NULL) {
                     (hidd_le_env.hidd_cb)(ESP_HIDD_EVENT_REG_FINISH, &hidd_param);
-                    hidd_le_create_service(hidd_le_env.gatt_if);
+                    esp_ble_gatts_create_attr_tab(hidd_le_gatt_db, gatts_if, HIDD_LE_IDX_NB, 0);
                 }
             }
             if(param->reg.app_id == HID_BAS_APP_ID) {
                 hidd_param.init_finish.gatts_if = gatts_if;
                  if(hidd_le_env.hidd_cb != NULL) {
                     (hidd_le_env.hidd_cb)(ESP_BAT_EVENT_REG, &hidd_param);
+                    esp_ble_gatts_create_attr_tab(bas_att_db, gatts_if, BAS_IDX_NB, 0);
                 }
-
             }
             if(param->reg.app_id == DIS_APP_ID) {
-                if(param->reg.status == ESP_GATT_OK)
-                {
-                    DIS_gatt_if = gatts_if;//保存下注册的服务句柄
-                    esp_ble_gatts_create_attr_tab(dis_att_db, gatts_if, DIS_IDX_NB, 1);//然后创建个表
+                hidd_param.init_finish.gatts_if = gatts_if;
+                 if(hidd_le_env.hidd_cb != NULL) {
+                    (hidd_le_env.hidd_cb)(ESP_BAT_EVENT_REG, &hidd_param);
+                    esp_ble_gatts_create_attr_tab(dis_att_db, gatts_if, DIS_IDX_NB, 0);
                 }
-                else
-                {
-                    ESP_LOGI("DIS服务", "注册失败");
-                }
-
             }
+            // if(param->reg.app_id == DIS_APP_ID) {
+            //     if(param->reg.status == ESP_GATT_OK)
+            //     {
+            //         DIS_gatt_if = gatts_if;//保存下注册的服务句柄
+            //         esp_ble_gatts_create_attr_tab(dis_att_db, gatts_if, DIS_IDX_NB, 1);//然后创建个表
+            //     }
+            //     else
+            //     {
+            //         ESP_LOGI("DIS服务", "注册失败");
+            //     }
+            // }
             
             break;
         }
@@ -852,8 +864,15 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
                     incl_svc.start_hdl = param->add_attr_tab.handles[BAS_IDX_SVC];
                     incl_svc.end_hdl = incl_svc.start_hdl + BAS_IDX_NB -1;
                     ESP_LOGI(HID_LE_PRF_TAG, "%s(), start added the hid service to the stack database. incl_handle = %d",__func__, incl_svc.start_hdl);
-                    esp_ble_gatts_create_attr_tab(hidd_le_gatt_db, gatts_if, HIDD_LE_IDX_NB, 0);
                 }
+
+                if (param->add_attr_tab.num_handle == DIS_IDX_NB &&param->add_attr_tab.svc_uuid.uuid.uuid16 == ESP_GATT_UUID_DEVICE_INFO_SVC) 
+                {
+                    incl_dis_svc.start_hdl = param->add_attr_tab.handles[DIS_IDX_SVC];
+                    incl_dis_svc.end_hdl = incl_dis_svc.start_hdl + DIS_IDX_NB -1;
+                    ESP_LOGI(HID_LE_PRF_TAG, "%s(), start added the hid service to the stack database. incl_handle = %d",__func__, incl_dis_svc.start_hdl);
+                }
+
                 if (param->add_attr_tab.num_handle == HIDD_LE_IDX_NB) 
                 {
                     memcpy(hidd_le_env.hidd_inst.att_tbl, param->add_attr_tab.handles,HIDD_LE_IDX_NB*sizeof(uint16_t));
@@ -863,20 +882,20 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
                 }
 
             }
-            else if(param->add_attr_tab.svc_inst_id == 1)
-            {
-                ESP_LOGI("蓝牙DIS服务", "开始服务");
-                if(param->add_attr_tab.num_handle == DIS_IDX_NB)
-                {
-                    memcpy(dis_handle_table, param->add_attr_tab.handles,sizeof(dis_handle_table));
-                    esp_err_t ret = esp_ble_gatts_start_service(dis_handle_table[DIS_IDX_SVC]);
-                    if(ret != ESP_OK)
-                    {
-                        ESP_LOGI("蓝牙DIS服务", "启动失败");
-                    }
+            // else if(param->add_attr_tab.svc_inst_id == 1)
+            // {
+            //     ESP_LOGI("蓝牙DIS服务", "开始服务");
+            //     if(param->add_attr_tab.num_handle == DIS_IDX_NB)
+            //     {
+            //         memcpy(dis_handle_table, param->add_attr_tab.handles,sizeof(dis_handle_table));
+            //         esp_err_t ret = esp_ble_gatts_start_service(dis_handle_table[DIS_IDX_SVC]);
+            //         if(ret != ESP_OK)
+            //         {
+            //             ESP_LOGI("蓝牙DIS服务", "启动失败");
+            //         }
 
-                }
-            }
+            //     }
+            // }
             
 
 
@@ -886,12 +905,6 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
         default:
             break;
     }
-}
-
-void hidd_le_create_service(esp_gatt_if_t gatts_if)
-{
-    /* 先添加HID服务的包含服务，电池*/
-    esp_ble_gatts_create_attr_tab(bas_att_db, gatts_if, BAS_IDX_NB, 0);
 }
 
 
