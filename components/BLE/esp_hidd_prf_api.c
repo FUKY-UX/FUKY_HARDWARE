@@ -11,17 +11,11 @@
 #include <string.h>
 #include "esp_log.h"
 
-// HID keyboard input report length
-#define HID_KEYBOARD_IN_RPT_LEN     8
-
-// HID LED output report length
-#define HID_LED_OUT_RPT_LEN         1
-
 // HID mouse input report length
 #define HID_MOUSE_IN_RPT_LEN        5
 
-// HID consumer control input report length
-#define HID_CC_IN_RPT_LEN           2
+// HID mouse input report length
+#define HID_IMU_IN_RPT_LEN          16
 
 esp_err_t esp_hidd_register_callbacks(esp_hidd_event_cb_t callbacks)
 {
@@ -36,11 +30,11 @@ esp_err_t esp_hidd_register_callbacks(esp_hidd_event_cb_t callbacks)
     if((hidd_status = hidd_register_cb()) != ESP_OK) {
         return hidd_status;
     }
-    esp_ble_gatts_app_register(HID_BAS_APP_ID);
+    //esp_ble_gatts_app_register(HID_BAS_APP_ID);
     if((hidd_status = esp_ble_gatts_app_register(HIDD_APP_ID)) != ESP_OK) {
         return hidd_status;
     }
-    esp_ble_gatts_app_register(DIS_APP_ID);
+    //esp_ble_gatts_app_register(DIS_APP_ID);
 
     return hidd_status;
 }
@@ -83,40 +77,6 @@ uint16_t esp_hidd_get_version(void)
 	return HIDD_VERSION;
 }
 
-void esp_hidd_send_consumer_value(uint16_t conn_id, uint8_t key_cmd, bool key_pressed)
-{
-    uint8_t buffer[HID_CC_IN_RPT_LEN] = {0, 0};
-    if (key_pressed) {
-        ESP_LOGD(HID_LE_PRF_TAG, "hid_consumer_build_report");
-        hid_consumer_build_report(buffer, key_cmd);
-    }
-    ESP_LOGD(HID_LE_PRF_TAG, "buffer[0] = %x, buffer[1] = %x", buffer[0], buffer[1]);
-    hid_dev_send_report(hidd_le_env.gatt_if, conn_id,
-                        HID_RPT_ID_CC_IN, HID_REPORT_TYPE_INPUT, HID_CC_IN_RPT_LEN, buffer);
-    return;
-}
-
-void esp_hidd_send_keyboard_value(uint16_t conn_id, key_mask_t special_key_mask, uint8_t *keyboard_cmd, uint8_t num_key)
-{
-    if (num_key > HID_KEYBOARD_IN_RPT_LEN - 2) {
-        ESP_LOGE(HID_LE_PRF_TAG, "%s(), the number key should not be more than %d", __func__, HID_KEYBOARD_IN_RPT_LEN);
-        return;
-    }
-
-    uint8_t buffer[HID_KEYBOARD_IN_RPT_LEN] = {0};
-
-    buffer[0] = special_key_mask;
-
-    for (int i = 0; i < num_key; i++) {
-        buffer[i+2] = keyboard_cmd[i];
-    }
-
-    ESP_LOGD(HID_LE_PRF_TAG, "the key vaule = %d,%d,%d, %d, %d, %d,%d, %d", buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6], buffer[7]);
-    hid_dev_send_report(hidd_le_env.gatt_if, conn_id,
-                        HID_RPT_ID_KEY_IN, HID_REPORT_TYPE_INPUT, HID_KEYBOARD_IN_RPT_LEN, buffer);
-    return;
-}
-
 void esp_hidd_send_mouse_value(uint16_t conn_id, uint8_t mouse_button, int8_t mickeys_x, int8_t mickeys_y)
 {
     uint8_t buffer[HID_MOUSE_IN_RPT_LEN];
@@ -150,5 +110,31 @@ void esp_hidd_send_hid_report(uint16_t conn_id,uint8_t mouse_button, int8_t mick
     // 通过 HID 发送鼠标数据（Report ID = 1）
     hid_dev_send_report(hidd_le_env.gatt_if, conn_id, 1, HID_REPORT_TYPE_INPUT, HID_MOUSE_IN_RPT_LEN, bufferM);
     // 通过 HID 发送IMU数据（Report ID = 5）
-    hid_dev_send_report(hidd_le_env.gatt_if, conn_id, 5, HID_REPORT_TYPE_INPUT, sizeof(report), bufferIMU);
+    //hid_dev_send_report(hidd_le_env.gatt_if, conn_id, 5, HID_REPORT_TYPE_INPUT, sizeof(report), bufferIMU);
+}
+
+void esp_hidd_send_imu_value(uint16_t conn_id, int16_t acc_x, int16_t acc_y, int16_t acc_z,
+    int16_t quat_w, int16_t quat_x, int16_t quat_y, int16_t quat_z)
+{
+uint8_t buffer[HID_IMU_IN_RPT_LEN];  // 确保这个长度足够容纳数据
+
+buffer[0] = HID_RPT_ID_IMU_IN;   // Report ID (假设为 2)
+buffer[1] = (uint8_t)(acc_x & 0xFF);
+buffer[2] = (uint8_t)((acc_x >> 8) & 0xFF);
+buffer[3] = (uint8_t)(acc_y & 0xFF);
+buffer[4] = (uint8_t)((acc_y >> 8) & 0xFF);
+buffer[5] = (uint8_t)(acc_z & 0xFF);
+buffer[6] = (uint8_t)((acc_z >> 8) & 0xFF);
+
+buffer[7]  = (uint8_t)(quat_w & 0xFF);
+buffer[8]  = (uint8_t)((quat_w >> 8) & 0xFF);
+buffer[9]  = (uint8_t)(quat_x & 0xFF);
+buffer[10] = (uint8_t)((quat_x >> 8) & 0xFF);
+buffer[11] = (uint8_t)(quat_y & 0xFF);
+buffer[12] = (uint8_t)((quat_y >> 8) & 0xFF);
+buffer[13] = (uint8_t)(quat_z & 0xFF);
+buffer[14] = (uint8_t)((quat_z >> 8) & 0xFF);
+
+hid_dev_send_report(hidd_le_env.gatt_if, conn_id,
+HID_RPT_ID_IMU_IN, HID_REPORT_TYPE_INPUT, HID_IMU_IN_RPT_LEN, buffer);
 }

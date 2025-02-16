@@ -81,7 +81,6 @@ static void hidd_event_callback(esp_hidd_cb_event_t event, esp_hidd_cb_param_t *
                 //esp_bd_addr_t rand_addr = {0x04,0x11,0x11,0x11,0x11,0x05};
                 esp_ble_gap_set_device_name(HIDD_DEVICE_NAME);
                 esp_ble_gap_config_adv_data(&hidd_adv_data);
-
             }
             break;
         }
@@ -166,6 +165,10 @@ void SendData(uint8_t mouse_button, int8_t mickeys_x, int8_t mickeys_y,
     esp_hidd_send_hid_report(hid_conn_id,mouse_button,mickeys_x,mickeys_y, &report);
 }
 
+void send_mouse_value(uint8_t mouse_button, int8_t mickeys_x, int8_t mickeys_y)
+{
+    esp_hidd_send_mouse_value(hid_conn_id,mouse_button,mickeys_x,mickeys_y);
+}
 
 void BLE_HID_Init(void)
 {
@@ -230,5 +233,6 @@ void BLE_HID_Init(void)
     esp_ble_gap_set_security_param(ESP_BLE_SM_SET_INIT_KEY, &init_key, sizeof(uint8_t));
     esp_ble_gap_set_security_param(ESP_BLE_SM_SET_RSP_KEY, &rsp_key, sizeof(uint8_t));
 
-    //xTaskCreate(&hid_demo_task, "hid_task", 2048, NULL, 5, NULL);
+
+
 }

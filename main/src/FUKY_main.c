@@ -47,11 +47,8 @@ void IRAM_ATTR Mouse_Function()
     int8_t  delta_y_8 = (int8_t)((float)delta_y / 32767 * 127);
 
     //tud_hid_mouse_report(HID_ITF_PROTOCOL_MOUSE, 0x00, delta_x_8, delta_y_8, 0, 0);
-    
-     SendData(GetButtonState(),delta_x_8,delta_y_8,
-     IMUDataBuffer.lin_accel_x,IMUDataBuffer.lin_accel_y,IMUDataBuffer.lin_accel_z,
-     IMUDataBuffer.quat_i,IMUDataBuffer.quat_j,IMUDataBuffer.quat_k,IMUDataBuffer.quat_w,IMUDataBuffer.interval);
-    
+    send_mouse_value(GetButtonState(),delta_x_8,delta_y_8);
+
     free(received_data);
 }
 

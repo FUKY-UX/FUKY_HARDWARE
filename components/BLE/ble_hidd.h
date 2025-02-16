@@ -7,10 +7,7 @@ extern "C" {
 
 void BLE_HID_Init(void);
 
-void SendData(uint8_t mouse_button, int8_t mickeys_x, int8_t mickeys_y,
-    float AccX,float AccY,float AccZ,
-    float QuatI,float QuatJ,float QuatK,float QuatW,float Interval);
-
+void send_mouse_value(uint8_t mouse_button, int8_t mickeys_x, int8_t mickeys_y);
 
 #ifdef __cplusplus
 }
