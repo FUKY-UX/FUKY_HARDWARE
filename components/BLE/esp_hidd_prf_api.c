@@ -113,28 +113,28 @@ void esp_hidd_send_hid_report(uint16_t conn_id,uint8_t mouse_button, int8_t mick
     //hid_dev_send_report(hidd_le_env.gatt_if, conn_id, 5, HID_REPORT_TYPE_INPUT, sizeof(report), bufferIMU);
 }
 
-// void esp_hidd_send_imu_value(uint16_t conn_id, int16_t acc_x, int16_t acc_y, int16_t acc_z,
-//     int16_t quat_w, int16_t quat_x, int16_t quat_y, int16_t quat_z)
-// {
-// uint8_t buffer[HID_IMU_IN_RPT_LEN];  // 确保这个长度足够容纳数据
+void esp_hidd_send_imu_value(uint16_t conn_id, int16_t acc_x, int16_t acc_y, int16_t acc_z,
+    int16_t quat_w, int16_t quat_x, int16_t quat_y, int16_t quat_z)
+{
+uint8_t buffer[HID_IMU_IN_RPT_LEN];  // 确保这个长度足够容纳数据
 
-// buffer[0] = HID_RPT_ID_IMU_IN;   // Report ID (假设为 2)
-// buffer[1] = (uint8_t)(acc_x & 0xFF);
-// buffer[2] = (uint8_t)((acc_x >> 8) & 0xFF);
-// buffer[3] = (uint8_t)(acc_y & 0xFF);
-// buffer[4] = (uint8_t)((acc_y >> 8) & 0xFF);
-// buffer[5] = (uint8_t)(acc_z & 0xFF);
-// buffer[6] = (uint8_t)((acc_z >> 8) & 0xFF);
+buffer[0] = HID_RPT_ID_IMU_IN;   // Report ID (假设为 2)
+buffer[1] = (uint8_t)(acc_x & 0xFF);
+buffer[2] = (uint8_t)((acc_x >> 8) & 0xFF);
+buffer[3] = (uint8_t)(acc_y & 0xFF);
+buffer[4] = (uint8_t)((acc_y >> 8) & 0xFF);
+buffer[5] = (uint8_t)(acc_z & 0xFF);
+buffer[6] = (uint8_t)((acc_z >> 8) & 0xFF);
 
-// buffer[7]  = (uint8_t)(quat_w & 0xFF);
-// buffer[8]  = (uint8_t)((quat_w >> 8) & 0xFF);
-// buffer[9]  = (uint8_t)(quat_x & 0xFF);
-// buffer[10] = (uint8_t)((quat_x >> 8) & 0xFF);
-// buffer[11] = (uint8_t)(quat_y & 0xFF);
-// buffer[12] = (uint8_t)((quat_y >> 8) & 0xFF);
-// buffer[13] = (uint8_t)(quat_z & 0xFF);
-// buffer[14] = (uint8_t)((quat_z >> 8) & 0xFF);
+buffer[7]  = (uint8_t)(quat_w & 0xFF);
+buffer[8]  = (uint8_t)((quat_w >> 8) & 0xFF);
+buffer[9]  = (uint8_t)(quat_x & 0xFF);
+buffer[10] = (uint8_t)((quat_x >> 8) & 0xFF);
+buffer[11] = (uint8_t)(quat_y & 0xFF);
+buffer[12] = (uint8_t)((quat_y >> 8) & 0xFF);
+buffer[13] = (uint8_t)(quat_z & 0xFF);
+buffer[14] = (uint8_t)((quat_z >> 8) & 0xFF);
 
-// hid_dev_send_report(hidd_le_env.gatt_if, conn_id,
-// HID_RPT_ID_IMU_IN, HID_REPORT_TYPE_INPUT, HID_IMU_IN_RPT_LEN, buffer);
-// }
+hid_dev_send_report(hidd_le_env.gatt_if, conn_id,
+HID_RPT_ID_IMU_IN, HID_REPORT_TYPE_INPUT, HID_IMU_IN_RPT_LEN, buffer);
+}

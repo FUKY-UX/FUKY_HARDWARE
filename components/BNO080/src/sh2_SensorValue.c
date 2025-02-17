@@ -95,120 +95,120 @@ int sh2_decodeSensorEvent(sh2_SensorValue_t *value, const sh2_SensorEvent_t *eve
     
     
     switch (value->sensorId) {
-        case SH2_RAW_ACCELEROMETER:
-            rc = decodeRawAccelerometer(value, event);
-            break;
-        case SH2_ACCELEROMETER:
-            rc = decodeAccelerometer(value, event);
-            break;
+        // case SH2_RAW_ACCELEROMETER:
+        //     rc = decodeRawAccelerometer(value, event);
+        //     break;
+        // case SH2_ACCELEROMETER:
+        //     rc = decodeAccelerometer(value, event);
+        //     break;
         case SH2_LINEAR_ACCELERATION:
             rc = decodeLinearAcceleration(value, event);
             break;
-        case SH2_GRAVITY:
-            rc = decodeGravity(value, event);
-            break;
-        case SH2_RAW_GYROSCOPE:
-            rc = decodeRawGyroscope(value, event);
-            break;
-        case SH2_GYROSCOPE_CALIBRATED:
-            rc = decodeGyroscopeCalibrated(value, event);
-            break;
-        case SH2_GYROSCOPE_UNCALIBRATED:
-            rc = decodeGyroscopeUncal(value, event);
-            break;
-        case SH2_RAW_MAGNETOMETER:
-            rc = decodeRawMagnetometer(value, event);
-            break;
-        case SH2_MAGNETIC_FIELD_CALIBRATED:
-            rc = decodeMagneticFieldCalibrated(value, event);
-            break;
-        case SH2_MAGNETIC_FIELD_UNCALIBRATED:
-            rc = decodeMagneticFieldUncal(value, event);
-            break;
+        // case SH2_GRAVITY:
+        //     rc = decodeGravity(value, event);
+        //     break;
+        // case SH2_RAW_GYROSCOPE:
+        //     rc = decodeRawGyroscope(value, event);
+        //     break;
+        // case SH2_GYROSCOPE_CALIBRATED:
+        //     rc = decodeGyroscopeCalibrated(value, event);
+        //     break;
+        // case SH2_GYROSCOPE_UNCALIBRATED:
+        //     rc = decodeGyroscopeUncal(value, event);
+        //     break;
+        // case SH2_RAW_MAGNETOMETER:
+        //     rc = decodeRawMagnetometer(value, event);
+        //     break;
+        // case SH2_MAGNETIC_FIELD_CALIBRATED:
+        //     rc = decodeMagneticFieldCalibrated(value, event);
+        //     break;
+        // case SH2_MAGNETIC_FIELD_UNCALIBRATED:
+        //     rc = decodeMagneticFieldUncal(value, event);
+        //     break;
         case SH2_ROTATION_VECTOR:
             rc = decodeRotationVector(value, event);
             break;
-        case SH2_GAME_ROTATION_VECTOR:
-            rc = decodeGameRotationVector(value, event);
-            break;
-        case SH2_GEOMAGNETIC_ROTATION_VECTOR:
-            rc = decodeGeomagneticRotationVector(value, event);
-            break;
-        case SH2_PRESSURE:
-            rc = decodePressure(value, event);
-            break;
-        case SH2_AMBIENT_LIGHT:
-            rc = decodeAmbientLight(value, event);
-            break;
-        case SH2_HUMIDITY:
-            rc = decodeHumidity(value, event);
-            break;
-        case SH2_PROXIMITY:
-            rc = decodeProximity(value, event);
-            break;
-        case SH2_TEMPERATURE:
-            rc = decodeTemperature(value, event);
-            break;
-        case SH2_RESERVED:
-            rc = decodeReserved(value, event);
-            break;
-        case SH2_TAP_DETECTOR:
-            rc = decodeTapDetector(value, event);
-            break;
-        case SH2_STEP_DETECTOR:
-            rc = decodeStepDetector(value, event);
-            break;
-        case SH2_STEP_COUNTER:
-            rc = decodeStepCounter(value, event);
-            break;
-        case SH2_SIGNIFICANT_MOTION:
-            rc = decodeSignificantMotion(value, event);
-            break;
-        case SH2_STABILITY_CLASSIFIER:
-            rc = decodeStabilityClassifier(value, event);
-            break;
-        case SH2_SHAKE_DETECTOR:
-            rc = decodeShakeDetector(value, event);
-            break;
-        case SH2_FLIP_DETECTOR:
-            rc = decodeFlipDetector(value, event);
-            break;
-        case SH2_PICKUP_DETECTOR:
-            rc = decodePickupDetector(value, event);
-            break;
-        case SH2_STABILITY_DETECTOR:
-            rc = decodeStabilityDetector(value, event);
-            break;
-        case SH2_PERSONAL_ACTIVITY_CLASSIFIER:
-            rc = decodePersonalActivityClassifier(value, event);
-            break;
-        case SH2_SLEEP_DETECTOR:
-            rc = decodeSleepDetector(value, event);
-            break;
-        case SH2_TILT_DETECTOR:
-            rc = decodeTiltDetector(value, event);
-            break;
-        case SH2_POCKET_DETECTOR:
-            rc = decodePocketDetector(value, event);
-            break;
-        case SH2_CIRCLE_DETECTOR:
-            rc = decodeCircleDetector(value, event);
-            break;
-        case SH2_HEART_RATE_MONITOR:
-            rc = decodeHeartRateMonitor(value, event);
-            break;
-        case SH2_ARVR_STABILIZED_RV:
-            rc = decodeArvrStabilizedRV(value, event);
-            break;
-        case SH2_ARVR_STABILIZED_GRV:
-            rc = decodeArvrStabilizedGRV(value, event);
-            break;
-        case SH2_GYRO_INTEGRATED_RV:
-            rc = decodeGyroIntegratedRV(value, event);
-            break;
-        case SH2_IZRO_MOTION_REQUEST:
-            rc = decodeIZroRequest(value, event);
-            break;
+        // case SH2_GAME_ROTATION_VECTOR:
+        //     rc = decodeGameRotationVector(value, event);
+        //     break;
+        // case SH2_GEOMAGNETIC_ROTATION_VECTOR:
+        //     rc = decodeGeomagneticRotationVector(value, event);
+        //     break;
+        // case SH2_PRESSURE:
+        //     rc = decodePressure(value, event);
+        //     break;
+        // case SH2_AMBIENT_LIGHT:
+        //     rc = decodeAmbientLight(value, event);
+        //     break;
+        // case SH2_HUMIDITY:
+        //     rc = decodeHumidity(value, event);
+        //     break;
+        // case SH2_PROXIMITY:
+        //     rc = decodeProximity(value, event);
+        //     break;
+        // case SH2_TEMPERATURE:
+        //     rc = decodeTemperature(value, event);
+        //     break;
+        // case SH2_RESERVED:
+        //     rc = decodeReserved(value, event);
+        //     break;
+        // case SH2_TAP_DETECTOR:
+        //     rc = decodeTapDetector(value, event);
+        //     break;
+        // case SH2_STEP_DETECTOR:
+        //     rc = decodeStepDetector(value, event);
+        //     break;
+        // case SH2_STEP_COUNTER:
+        //     rc = decodeStepCounter(value, event);
+        //     break;
+        // case SH2_SIGNIFICANT_MOTION:
+        //     rc = decodeSignificantMotion(value, event);
+        //     break;
+        // case SH2_STABILITY_CLASSIFIER:
+        //     rc = decodeStabilityClassifier(value, event);
+        //     break;
+        // case SH2_SHAKE_DETECTOR:
+        //     rc = decodeShakeDetector(value, event);
+        //     break;
+        // case SH2_FLIP_DETECTOR:
+        //     rc = decodeFlipDetector(value, event);
+        //     break;
+        // case SH2_PICKUP_DETECTOR:
+        //     rc = decodePickupDetector(value, event);
+        //     break;
+        // case SH2_STABILITY_DETECTOR:
+        //     rc = decodeStabilityDetector(value, event);
+        //     break;
+        // case SH2_PERSONAL_ACTIVITY_CLASSIFIER:
+        //     rc = decodePersonalActivityClassifier(value, event);
+        //     break;
+        // case SH2_SLEEP_DETECTOR:
+        //     rc = decodeSleepDetector(value, event);
+        //     break;
+        // case SH2_TILT_DETECTOR:
+        //     rc = decodeTiltDetector(value, event);
+        //     break;
+        // case SH2_POCKET_DETECTOR:
+        //     rc = decodePocketDetector(value, event);
+        //     break;
+        // case SH2_CIRCLE_DETECTOR:
+        //     rc = decodeCircleDetector(value, event);
+        //     break;
+        // case SH2_HEART_RATE_MONITOR:
+        //     rc = decodeHeartRateMonitor(value, event);
+        //     break;
+        // case SH2_ARVR_STABILIZED_RV:
+        //     rc = decodeArvrStabilizedRV(value, event);
+        //     break;
+        // case SH2_ARVR_STABILIZED_GRV:
+        //     rc = decodeArvrStabilizedGRV(value, event);
+        //     break;
+        // case SH2_GYRO_INTEGRATED_RV:
+        //     rc = decodeGyroIntegratedRV(value, event);
+        //     break;
+        // case SH2_IZRO_MOTION_REQUEST:
+        //     rc = decodeIZroRequest(value, event);
+        //     break;
         default:
             // Unknown report id
             rc = SH2_ERR;
