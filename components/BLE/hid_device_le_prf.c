@@ -561,26 +561,26 @@ static void hid_add_id_tbl(void)
 
       // Boot mouse input report
       // Use same ID and type as mouse input report
-      hid_rpt_map[6].id = hidReportRefMouseIn[0];
-      hid_rpt_map[6].type = hidReportRefMouseIn[1];
-      hid_rpt_map[6].handle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_BOOT_MOUSE_IN_REPORT_VAL];
-      hid_rpt_map[6].cccdHandle = 0;
-      hid_rpt_map[6].mode = HID_PROTOCOL_MODE_BOOT;
+      hid_rpt_map[1].id = hidReportRefMouseIn[0];
+      hid_rpt_map[1].type = hidReportRefMouseIn[1];
+      hid_rpt_map[1].handle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_BOOT_MOUSE_IN_REPORT_VAL];
+      hid_rpt_map[1].cccdHandle = 0;
+      hid_rpt_map[1].mode = HID_PROTOCOL_MODE_BOOT;
 
      // IMU input report
-     hid_rpt_map[0].id = hidReportRefIMUin[0];
-     hid_rpt_map[0].type = hidReportRefIMUin[1];
-     hid_rpt_map[0].handle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_REPORT_IMU_IN_VAL];
-     hid_rpt_map[0].cccdHandle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_REPORT_IMU_IN_CCC];
-     hid_rpt_map[0].mode = HID_PROTOCOL_MODE_REPORT;
+     hid_rpt_map[2].id = hidReportRefIMUin[0];
+     hid_rpt_map[2].type = hidReportRefIMUin[1];
+     hid_rpt_map[2].handle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_REPORT_IMU_IN_VAL];
+     hid_rpt_map[2].cccdHandle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_REPORT_IMU_IN_CCC];
+     hid_rpt_map[2].mode = HID_PROTOCOL_MODE_REPORT;
 
 
       // Feature report
-      hid_rpt_map[7].id = hidReportRefFeature[0];
-      hid_rpt_map[7].type = hidReportRefFeature[1];
-      hid_rpt_map[7].handle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_REPORT_VAL];
-      hid_rpt_map[7].cccdHandle = 0;
-      hid_rpt_map[7].mode = HID_PROTOCOL_MODE_REPORT;
+      hid_rpt_map[3].id = hidReportRefFeature[0];
+      hid_rpt_map[3].type = hidReportRefFeature[1];
+      hid_rpt_map[3].handle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_REPORT_VAL];
+      hid_rpt_map[3].cccdHandle = 0;
+      hid_rpt_map[3].mode = HID_PROTOCOL_MODE_REPORT;
 
 
   // Setup report ID map
