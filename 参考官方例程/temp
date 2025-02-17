@@ -1,0 +1,25 @@
+
+
+// Battery Service Attributes Indexes
+// enum
+// {
+//     BAS_IDX_SVC,
+//     BAS_IDX_BATT_LVL_CHAR,
+//     BAS_IDX_BATT_LVL_VAL,
+//     BAS_IDX_BATT_LVL_NTF_CFG,
+//     BAS_IDX_BATT_LVL_PRES_FMT,
+//     BAS_IDX_NB,
+// }; 
+
+/// Device Information Service
+// enum {
+//     DIS_IDX_SVC,                // Service Declaration
+//     DIS_IDX_MANU_NAME_CHAR,     // Manufacturer Name String: Characteristic Declaration
+//     DIS_IDX_MANU_NAME_VAL,      // Manufacturer Name String: Characteristic Value
+//     DIS_IDX_MODEL_NUM_CHAR,     // Model Number String: Characteristic Declaration
+//     DIS_IDX_MODEL_NUM_VAL,      // Model Number String: Characteristic Value
+//     DIS_IDX_SERIAL_NUM_CHAR,    // Serial Number String: Characteristic Declaration
+//     DIS_IDX_SERIAL_NUM_VAL,     // Serial Number String: Characteristic Value
+
+//     DIS_IDX_NB                  // 总数
+// };
