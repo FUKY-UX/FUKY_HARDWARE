@@ -388,7 +388,7 @@
  }
  
  static struct gatts_profile_inst heart_rate_profile_tab[PROFILE_NUM] = {
-     [PROFILE_APP_IDX] = {
+     [HID_APP_IDX] = {
          .gatts_cb = esp_hidd_prf_cb_hdl,
          .gatts_if = ESP_GATT_IF_NONE,       /* Not get the gatt_if, so initial is ESP_GATT_IF_NONE */
      },
@@ -402,7 +402,7 @@
      if (event == ESP_GATTS_REG_EVT) 
      {
          if (param->reg.status == ESP_GATT_OK) {
-             heart_rate_profile_tab[PROFILE_APP_IDX].gatts_if = gatts_if;
+             heart_rate_profile_tab[HID_APP_IDX].gatts_if = gatts_if;
          } else {
              ESP_LOGI(HID_LE_PRF_TAG, "Reg app failed, app_id %04x, status %d",
                      param->reg.app_id,

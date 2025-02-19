@@ -827,27 +827,24 @@ IMUData_t IRAM_ATTR bno080_Function(void)
   {
     if(getSensorEventID() == SH2_LINEAR_ACCELERATION)
     {
-      float x = getLinAccelX();
-      float y = getLinAccelY();
-      float z = getLinAccelZ();
-      uint8_t linAccuracy = getAccuracy();
+      int16_t x = getLinAccelX();
+      int16_t y = getLinAccelY();
+      int16_t z = getLinAccelZ();
       //printf("加速度: x=%.2f, y=%.2f, z=%.2f, A=%d\n", x, y, z, linAccuracy);
       IMUData.lin_accel_x = x;
       IMUData.lin_accel_y = y;
       IMUData.lin_accel_z = z;
-      IMUData.interval =_sensor_value->timestamp;
     }
     if(getSensorEventID() == SH2_ROTATION_VECTOR)
     {
-      float I = getQuatI();
-      float J = getQuatJ();
-      float K = getQuatK();
-      float W = getQuatReal();
+      int16_t I = getQuatI();
+      int16_t J = getQuatJ();
+      int16_t K = getQuatK();
+      int16_t W = getQuatReal();
       IMUData.quat_i = I;
       IMUData.quat_j = J;
       IMUData.quat_k = K;
       IMUData.quat_w = W;
-      IMUData.interval =_sensor_value->timestamp;
       //printf("四元数: i=%.2f, j=%.2f, k=%.2f, w=%.2f\n", I, J, K, W);
     }
   }

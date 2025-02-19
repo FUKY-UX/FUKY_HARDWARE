@@ -57,6 +57,8 @@
         "istream": "c",
         "hid_sensor_spec.h": "c",
         "random": "c",
-        "chrono": "c"
+        "chrono": "c",
+        "span": "c",
+        "bitset": "c"
     }
 }

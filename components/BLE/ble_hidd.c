@@ -146,23 +146,9 @@ static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param
     }
 }
 
-void SendData(uint8_t mouse_button, int8_t mickeys_x, int8_t mickeys_y,
-    float AccX,float AccY,float AccZ,
-    float QuatI,float QuatJ,float QuatK,float QuatW,float Interval)
+void SendIMUData(int16_t AccX,int16_t AccY,int16_t AccZ,int16_t QuatI,int16_t QuatJ,int16_t QuatK,int16_t QuatW)
 {
-    IMUReport_t report = {
-        .lin_accel_x = AccX,
-        .lin_accel_y = AccY,
-        .lin_accel_z = AccZ,
-        .quat_i = QuatI,
-        .quat_j = QuatJ,
-        .quat_k = QuatK,
-        .quat_w = QuatW,
-        .interval = Interval
-    };
-
-    // 发送合并的 HID 报告
-    esp_hidd_send_hid_report(hid_conn_id,mouse_button,mickeys_x,mickeys_y, &report);
+    esp_hidd_send_imu_value(hid_conn_id, AccX, AccY, AccZ, QuatI, QuatJ, QuatK, QuatW);
 }
 
 void send_mouse_value(uint8_t mouse_button, int8_t mickeys_x, int8_t mickeys_y)

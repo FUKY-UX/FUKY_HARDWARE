@@ -34,6 +34,8 @@ void app_main(void)
     while (1)
     {
         IMUDataBuffer = bno080_Function();
+        SendIMUData(IMUDataBuffer.lin_accel_x,IMUDataBuffer.lin_accel_y,IMUDataBuffer.lin_accel_z,
+            IMUDataBuffer.quat_i,IMUDataBuffer.quat_j,IMUDataBuffer.quat_k,IMUDataBuffer.quat_w);
         Mouse_Function();
     }
 }
@@ -45,10 +47,7 @@ void IRAM_ATTR Mouse_Function()
     delta_y = (int16_t)(received_data[4] + (received_data[5] << 8));
     int8_t  delta_x_8 = (int8_t)((float)delta_x / 32767 * 127);
     int8_t  delta_y_8 = (int8_t)((float)delta_y / 32767 * 127);
-
-    //tud_hid_mouse_report(HID_ITF_PROTOCOL_MOUSE, 0x00, delta_x_8, delta_y_8, 0, 0);
     send_mouse_value(GetButtonState(),delta_x_8,delta_y_8);
-
     free(received_data);
 }
 

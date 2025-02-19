@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: Unlicense OR CC0-1.0
  */
 
-
-
 #ifndef __HID_DEVICE_LE_PRF__
 #define __HID_DEVICE_LE_PRF__
 #include <stdbool.h>
@@ -15,6 +13,16 @@
 #include "esp_gap_ble_api.h"
 #include "hid_dev.h"
 
+// 定义 IMU 报告结构体
+typedef struct {
+    int16_t lin_accel_x;
+    int16_t lin_accel_y;
+    int16_t lin_accel_z;
+    int16_t quat_i;
+    int16_t quat_j;
+    int16_t quat_k;
+    int16_t quat_w;
+} __attribute__((packed)) IMUData_t;
 
 //HID BLE profile log tag
 #define HID_LE_PRF_TAG                        "HID_LE_PRF"
@@ -33,17 +41,17 @@
 #define HID_MAX_APPS                 1
 
 // Number of HID reports defined in the service
-#define HID_NUM_REPORTS          4
+#define HID_NUM_REPORTS          3
 
 // HID Report IDs for the service
 #define HID_RPT_ID_MOUSE_IN      1   // Mouse input report ID
-#define HID_RPT_ID_IMU_IN        2   // IMU input report ID
+#define HID_RPT_ID_IMU_IN        4   // IMU input report ID
 #define HID_RPT_ID_FEATURE       0  // Feature report ID
 
 #define HIDD_APP_ID			    0x1812//ATT_SVC_HID
 
-#define HID_BAS_APP_ID      0x180f
-#define DIS_APP_ID              0x180A
+#define IMU_APP_ID              0x180A
+//#define DIS_APP_ID              0x180A
 
 #define ATT_SVC_HID          0x1812
 
@@ -93,6 +101,19 @@
 #define HID_REPORT_TYPE_FEATURE     3
 
 
+/// IMU Service Attributes Indexes
+enum
+{
+    IMU_IDX_SVC,
+
+    IMU_IDX_IMUIN_CHAR,
+    IMU_IDX_IMUIN_VAL,
+    IMU_IDX_IMUIN_CCC,
+    IMU_IDX_REP_REF,
+
+    IMU_IDX_NB,
+};
+
 /// HID Service Attributes Indexes
 enum {
     HIDD_LE_IDX_SVC,
@@ -116,11 +137,11 @@ enum {
     HIDD_LE_IDX_REPORT_MOUSE_IN_CCC,
     HIDD_LE_IDX_REPORT_MOUSE_REP_REF,
     
-    // Report IMU input
-    HIDD_LE_IDX_REPORT_IMU_IN_CHAR,
-    HIDD_LE_IDX_REPORT_IMU_IN_VAL,
-    HIDD_LE_IDX_REPORT_IMU_IN_CCC,
-    HIDD_LE_IDX_REPORT_IMU_REP_REF,
+    // // Report IMU input
+    // HIDD_LE_IDX_REPORT_IMU_IN_CHAR,
+    // HIDD_LE_IDX_REPORT_IMU_IN_VAL,
+    // HIDD_LE_IDX_REPORT_IMU_IN_CCC,
+    // HIDD_LE_IDX_REPORT_IMU_REP_REF,
     
     // Report Boot Mouse Input
     HIDD_LE_IDX_BOOT_MOUSE_IN_REPORT_CHAR,
@@ -284,7 +305,15 @@ typedef struct {
 
 extern hidd_le_env_t hidd_le_env;
 extern uint8_t hidProtocolMode;
-
+//===================
+//imu ggat 蓝牙通信用
+//===================
+typedef struct {
+    uint16_t att_tbl[IMU_IDX_NB];
+    esp_gatt_if_t IMU_gatt_if;
+    uint16_t IMU_att_handle;
+} imu_env_t;
+extern imu_env_t imu_env;
 
 void hidd_clcb_alloc (uint16_t conn_id, esp_bd_addr_t bda);
 
