@@ -24,14 +24,13 @@
 
 // 定义 HID 报告结构体
 typedef struct {
-    float lin_accel_x;
-    float lin_accel_y;
-    float lin_accel_z;
-    float quat_i;
-    float quat_j;
-    float quat_k;
-    float quat_w;
-    float interval;
+    int16_t lin_accel_x;
+    int16_t lin_accel_y;
+    int16_t lin_accel_z;
+    int16_t quat_i;
+    int16_t quat_j;
+    int16_t quat_k;
+    int16_t quat_w;
 } __attribute__((packed)) IMUData_t;
 
 // 全局变量

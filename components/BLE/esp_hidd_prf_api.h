@@ -6,7 +6,6 @@
 
 #ifndef __ESP_HIDD_API_H__
 #define __ESP_HIDD_API_H__
-
 #include "esp_bt_defs.h"
 #include "esp_gatt_defs.h"
 #include "esp_err.h"
@@ -169,13 +168,10 @@ esp_err_t esp_hidd_profile_deinit(void);
  */
 uint16_t esp_hidd_get_version(void);
 
-void esp_hidd_send_consumer_value(uint16_t conn_id, uint8_t key_cmd, bool key_pressed);
-
-void esp_hidd_send_keyboard_value(uint16_t conn_id, key_mask_t special_key_mask, uint8_t *keyboard_cmd, uint8_t num_key);
-
 void esp_hidd_send_mouse_value(uint16_t conn_id, uint8_t mouse_button, int8_t mickeys_x, int8_t mickeys_y);
 
-void esp_hidd_send_hid_report(uint16_t conn_id,uint8_t mouse_button, int8_t mickeys_x,int8_t mickeys_y,IMUReport_t *report);
+void esp_hidd_send_imu_value(uint16_t conn_id,int16_t lin_accel_x,int16_t lin_accel_y,int16_t lin_accel_z,
+    int16_t quat_i,int16_t quat_j,int16_t quat_k,int16_t quat_w);
 
 #ifdef __cplusplus
 }

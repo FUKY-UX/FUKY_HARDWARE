@@ -51,7 +51,7 @@ static esp_ble_adv_data_t hidd_adv_data = {
     .include_txpower = true,
     .min_interval = 0x0006, //slave connection min interval, Time = min_interval * 1.25 msec
     .max_interval = 0x0010, //slave connection max interval, Time = max_interval * 1.25 msec
-    .appearance = 0x03c2,       //HID Generic,
+    .appearance = 0x03c2,       //HID Mouse,
     .manufacturer_len = 0,
     .p_manufacturer_data =  NULL,
     .service_data_len = 0,
@@ -81,7 +81,6 @@ static void hidd_event_callback(esp_hidd_cb_event_t event, esp_hidd_cb_param_t *
                 //esp_bd_addr_t rand_addr = {0x04,0x11,0x11,0x11,0x11,0x05};
                 esp_ble_gap_set_device_name(HIDD_DEVICE_NAME);
                 esp_ble_gap_config_adv_data(&hidd_adv_data);
-
             }
             break;
         }
@@ -147,25 +146,15 @@ static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param
     }
 }
 
-void SendData(uint8_t mouse_button, int8_t mickeys_x, int8_t mickeys_y,
-    float AccX,float AccY,float AccZ,
-    float QuatI,float QuatJ,float QuatK,float QuatW,float Interval)
+void SendIMUData(int16_t AccX,int16_t AccY,int16_t AccZ,int16_t QuatI,int16_t QuatJ,int16_t QuatK,int16_t QuatW)
 {
-    IMUReport_t report = {
-        .lin_accel_x = AccX,
-        .lin_accel_y = AccY,
-        .lin_accel_z = AccZ,
-        .quat_i = QuatI,
-        .quat_j = QuatJ,
-        .quat_k = QuatK,
-        .quat_w = QuatW,
-        .interval = Interval
-    };
-
-    // 发送合并的 HID 报告
-    esp_hidd_send_hid_report(hid_conn_id,mouse_button,mickeys_x,mickeys_y, &report);
+    esp_hidd_send_imu_value(hid_conn_id, AccX, AccY, AccZ, QuatI, QuatJ, QuatK, QuatW);
 }
 
+void send_mouse_value(uint8_t mouse_button, int8_t mickeys_x, int8_t mickeys_y)
+{
+    esp_hidd_send_mouse_value(hid_conn_id,mouse_button,mickeys_x,mickeys_y);
+}
 
 void BLE_HID_Init(void)
 {
@@ -230,5 +219,6 @@ void BLE_HID_Init(void)
     esp_ble_gap_set_security_param(ESP_BLE_SM_SET_INIT_KEY, &init_key, sizeof(uint8_t));
     esp_ble_gap_set_security_param(ESP_BLE_SM_SET_RSP_KEY, &rsp_key, sizeof(uint8_t));
 
-    //xTaskCreate(&hid_demo_task, "hid_task", 2048, NULL, 5, NULL);
+
+
 }

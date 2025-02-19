@@ -75,9 +75,9 @@ typedef struct sh2_RawAccelerometer {
  * See the SH-2 Reference Manual for more detail.
  */
 typedef struct sh2_Accelerometer {
-    float x;
-    float y;
-    float z;
+    int16_t x;
+    int16_t y;
+    int16_t z;
 } sh2_Accelerometer_t;
 
 /**
@@ -171,11 +171,11 @@ typedef struct sh2_MagneticFieldUncalibrated {
  * See the SH-2 Reference Manual for more detail.
  */
 typedef struct sh2_RotationVectorWAcc {
-    float i;  /**< @brief Quaternion component i */
-    float j;  /**< @brief Quaternion component j */
-    float k;  /**< @brief Quaternion component k */
-    float real;  /**< @brief Quaternion component, real */
-    float accuracy;  /**< @brief Accuracy estimate [radians] */
+    int16_t i;  /**< @brief Quaternion component i */
+    int16_t j;  /**< @brief Quaternion component j */
+    int16_t k;  /**< @brief Quaternion component k */
+    int16_t real;  /**< @brief Quaternion component, real */
+    int16_t accuracy;  /**< @brief Accuracy estimate [radians] */
 } sh2_RotationVectorWAcc_t;
 
 /**

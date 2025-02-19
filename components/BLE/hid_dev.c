@@ -49,7 +49,7 @@ void hid_dev_send_report(esp_gatt_if_t gatts_if, uint16_t conn_id,
     return;
 }
 
-void hid_consumer_build_report(uint8_t *buffer, consumer_cmd_t cmd)
+/*void hid_consumer_build_report(uint8_t *buffer, consumer_cmd_t cmd)
 {
     if (!buffer) {
         ESP_LOGE(HID_LE_PRF_TAG, "%s(), the buffer is NULL, hid build report failed.", __func__);
@@ -127,3 +127,4 @@ void hid_consumer_build_report(uint8_t *buffer, consumer_cmd_t cmd)
 
     return;
 }
+*/
